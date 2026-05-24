@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PHONK — The Underground Sound</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ── VARIABLES ── */
+    :root {
+      --bg:      #06060a;
+      --dark:    #0e0e14;
+      --card:    #12121a;
+      --border:  rgba(255,255,255,0.06);
+      --red:     #cc1111;
+      --redglow: #ff2233;
+      --pur:     #8b00ff;
+      --purglow: #b44dff;
+      --text:    #d0d0d8;
+      --dim:     #888898;
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 17px;
+      line-height: 1.75;
+      overflow-x: hidden;
+    }
+
+    /* grain overlay */
+    body::after {
+      content:'';
+      position:fixed; inset:0;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity:.025;
+      pointer-events:none;
+      z-index:9999;
+    }
+
+    /* ── SCROLL PROGRESS ── */
+    #progress-bar {
+      position:fixed; top:0; left:0;
+      height:3px; width:0%;
+      background: linear-gradient(90deg, var(--red), var(--pur));
+      z-index:200;
+      transition: width .1s linear;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position:fixed; top:3px; width:100%; z-index:100;
+      background: rgba(6,6,10,.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(204,17,17,.25);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 2.5rem; height:58px;
+    }
+    .nav-logo {
+      font-family:'Bebas Neue',cursive;
+      font-size:1.9rem; letter-spacing:.12em;
+      color:var(--red);
+      text-shadow:0 0 18px rgba(204,17,17,.7);
+    }
+    .nav-links { display:flex; gap:2rem; list-style:none; }
+    .nav-links a {
+      color:var(--dim); text-decoration:none;
+      font-family:'Bebas Neue',cursive;
+      font-size:1rem; letter-spacing:.12em;
+      transition: color .25s, text-shadow .25s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color:var(--redglow);
+      text-shadow:0 0 12px rgba(255,34,51,.7);
+    }
+
+    /* ── HERO ── */
+    #hero {
+      height:100vh;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      position:relative; overflow:hidden;
+      background: radial-gradient(ellipse at 50% 60%, #1c0015 0%, #06060a 65%);
+    }
+    #hero canvas {
+      position:absolute; inset:0;
+      pointer-events:none; opacity:.6;
+    }
+    .hero-grid-bg {
+      position:absolute; inset:0;
+      background:
+        repeating-linear-gradient(0deg,transparent,transparent 50px,rgba(139,0,255,.04) 50px,rgba(139,0,255,.04) 51px),
+        repeating-linear-gradient(90deg,transparent,transparent 50px,rgba(204,17,17,.04) 50px,rgba(204,17,17,.04) 51px);
+    }
+    .hero-eyebrow {
+      font-family:'Orbitron',sans-serif;
+      font-size:.72rem; letter-spacing:.5em;
+      color:var(--red); opacity:.85;
+      text-transform:uppercase; margin-bottom:1.2rem;
+      position:relative; z-index:2;
+    }
+
+    /* GLITCH TITLE */
+    .glitch-wrap { position:relative; z-index:2; }
+    .glitch-title {
+      font-family:'Bebas Neue',cursive;
+      font-size:clamp(5rem,16vw,13rem);
+      color:#fff; letter-spacing:.04em;
+      text-shadow:0 0 60px rgba(204,17,17,.35);
+      position:relative;
+      animation: gMain 5s infinite;
+    }
+    .glitch-title::before,
+    .glitch-title::after {
+      content: attr(data-text);
+      position:absolute; top:0; left:0; width:100%;
+    }
+    .glitch-title::before {
+      color:var(--red);
+      clip-path:polygon(0 0,100% 0,100% 35%,0 35%);
+      animation: gBefore 5s infinite;
+    }
+    .glitch-title::after {
+      color:var(--pur);
+      clip-path:polygon(0 65%,100% 65%,100% 100%,0 100%);
+      animation: gAfter 5s infinite;
+    }
+    @keyframes gMain {
+      0%,88%,100%{transform:none}
+      89%{transform:skewX(-1.5deg)}
+      91%{transform:skewX(1.5deg) scaleX(1.01)}
+      93%{transform:skewX(-.5deg)}
+      95%{transform:none}
+    }
+    @keyframes gBefore {
+      0%,85%,100%{opacity:0;transform:none}
+      86%{opacity:.9;transform:translate(-5px,-2px)}
+      88%{opacity:.9;transform:translate(5px,2px)}
+      90%{opacity:0}
+    }
+    @keyframes gAfter {
+      0%,87%,100%{opacity:0;transform:none}
+      88%{opacity:.9;transform:translate(5px,2px)}
+      91%{opacity:.9;transform:translate(-5px,-2px)}
+      93%{opacity:0}
+    }
+
+    .hero-tagline {
+      font-size:1.1rem; letter-spacing:.4em;
+      color:var(--dim); text-transform:uppercase;
+      margin-top:.8rem; position:relative; z-index:2;
+    }
+    .hero-tagline em { font-style:normal; color:var(--purglow); }
+
+    .scroll-cue {
+      position:absolute; bottom:2.5rem;
+      display:flex; flex-direction:column; align-items:center; gap:.4rem;
+      color:var(--dim); font-size:.7rem; letter-spacing:.25em;
+      text-transform:uppercase;
+      animation: bob 2.2s ease-in-out infinite;
+      z-index:2;
+    }
+    .scroll-cue::after {
+      content:''; display:block;
+      width:1px; height:40px;
+      background: linear-gradient(to bottom, var(--red), transparent);
+    }
+    @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+
+    /* ── SECTION WRAPPERS ── */
+    .sw { padding:5rem 0; position:relative; }
+    .sw:nth-child(even) { background:var(--dark); }
+    section {
+      max-width:1120px; margin:0 auto;
+      padding:0 2.5rem; position:relative;
+    }
+
+    .sec-label {
+      display:block;
+      font-family:'Orbitron',sans-serif;
+      font-size:.65rem; letter-spacing:.45em;
+      color:var(--red); text-transform:uppercase;
+      margin-bottom:.5rem;
+    }
+    .sec-num {
+      position:absolute; top:-1rem; right:0;
+      font-family:'Bebas Neue',cursive;
+      font-size:8rem; color:rgba(204,17,17,.07);
+      line-height:1; pointer-events:none; user-select:none;
+    }
+    h2.sec-title {
+      font-family:'Bebas Neue',cursive;
+      font-size:clamp(2.4rem,5vw,4rem);
+      color:#fff; letter-spacing:.05em;
+      margin-bottom:2.5rem;
+      padding-left:1.4rem; position:relative;
+    }
+    h2.sec-title::before {
+      content:'';
+      position:absolute; left:0; top:10%; height:80%; width:4px;
+      background: linear-gradient(to bottom, var(--red), var(--pur));
+      border-radius:2px;
+    }
+
+    /* ── TYPOGRAPHY ── */
+    p { margin-bottom:1rem; color:#c4c4d0; }
+    .lead {
+      font-size:1.2rem; font-weight:600; color:#dde;
+      border-bottom:2px solid rgba(204,17,17,.35);
+      padding-bottom:1.6rem; margin-bottom:1.8rem;
+    }
+    .nr { color:var(--redglow); text-shadow:0 0 8px rgba(255,34,51,.5); }
+    .np { color:var(--purglow); text-shadow:0 0 8px rgba(180,77,255,.5); }
+    strong { color:#e8e8f0; }
+    blockquote {
+      border-left:3px solid var(--pur);
+      padding-left:1.4rem; margin:1.5rem 0;
+      color:var(--dim); font-style:italic;
+    }
+    ul.dot { list-style:none; padding:0; }
+    ul.dot li {
+      padding:.35rem 0 .35rem 1.6rem;
+      position:relative; color:var(--text);
+    }
+    ul.dot li::before {
+      content:'▸'; position:absolute; left:0;
+      color:var(--red);
+    }
+
+    /* ── GENERIC CARD ── */
+    .card {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-left:3px solid var(--red);
+      border-radius:5px; padding:1.5rem 1.8rem;
+      margin-bottom:1.4rem;
+      transition: transform .3s, box-shadow .3s;
+    }
+    .card:hover {
+      transform:translateX(6px);
+      box-shadow:-6px 0 24px rgba(204,17,17,.18);
+    }
+    .card h3 {
+      font-family:'Bebas Neue',cursive;
+      font-size:1.45rem; color:var(--redglow);
+      letter-spacing:.05em; margin-bottom:.5rem;
+    }
+
+    /* ── GRID ── */
+    .g2 { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+    @media(max-width:768px){
+      .g2 { grid-template-columns:1fr; }
+      .nav-links { display:none; }
+    }
+
+    /* ── HIGHLIGHT BOX ── */
+    .hbox {
+      background: linear-gradient(135deg,rgba(204,17,17,.09),rgba(139,0,255,.09));
+      border:1px solid rgba(139,0,255,.2);
+      border-radius:6px; padding:1.4rem 1.8rem;
+      margin:2rem 0;
+    }
+
+    /* ── ICON GRID ── */
+    .icon-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+      gap:1.2rem; margin:2rem 0;
+    }
+    .icon-card {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:6px; padding:1.4rem;
+      text-align:center;
+      transition: border-color .3s, transform .3s;
+    }
+    .icon-card:hover { border-color:var(--pur); transform:translateY(-4px); }
+    .icon-card .ico { font-size:2.2rem; display:block; margin-bottom:.7rem; }
+    .icon-card h3 {
+      font-family:'Bebas Neue',cursive;
+      font-size:1.15rem; color:var(--purglow);
+      letter-spacing:.05em; margin-bottom:.35rem;
+    }
+    .icon-card p { font-size:.82rem; color:var(--dim); margin:0; }
+
+    /* ── TIMELINE ── */
+    .timeline { position:relative; padding-left:2.2rem; }
+    .timeline::before {
+      content:''; position:absolute;
+      left:0; top:0; bottom:0; width:2px;
+      background: linear-gradient(to bottom, var(--red), var(--pur), transparent);
+    }
+    .titem {
+      position:relative; margin-bottom:2.2rem;
+      padding-left:1.6rem;
+    }
+    .titem::before {
+      content:''; position:absolute; left:-2.2rem; top:.5rem;
+      width:12px; height:12px; border-radius:50%;
+      background:var(--red);
+      box-shadow:0 0 12px rgba(204,17,17,.9);
+    }
+    .titem .yr {
+      font-family:'Bebas Neue',cursive;
+      font-size:1.35rem; color:var(--red); letter-spacing:.1em;
+    }
+    .titem h3 {
+      font-family:'Rajdhani',sans-serif;
+      font-size:1.1rem; font-weight:700; color:#eee;
+      margin-bottom:.35rem;
+    }
+
+    /* ── ARTIST GRID ── */
+    .artist-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+      gap:1.6rem;
+    }
+    .acard {
+      background:var(--card);
+      border:1px solid rgba(139,0,255,.13);
+      border-radius:7px; padding:1.6rem;
+      position:relative; overflow:hidden;
+      transition: transform .3s, border-color .3s, box-shadow .3s;
+    }
+    .acard::before {
+      content:''; position:absolute;
+      top:0; left:0; right:0; height:3px;
+      background: linear-gradient(90deg, var(--red), var(--pur));
+    }
+    .acard:hover {
+      transform:translateY(-6px);
+      border-color:rgba(139,0,255,.4);
+      box-shadow:0 20px 40px rgba(0,0,0,.5);
+    }
+    .aname {
+      font-family:'Bebas Neue',cursive;
+      font-size:1.65rem; color:#fff;
+      letter-spacing:.05em; margin-bottom:.3rem;
+    }
+    .atag {
+      display:inline-block;
+      background:rgba(204,17,17,.18);
+      color:var(--redglow);
+      font-size:.66rem; letter-spacing:.2em;
+      padding:2px 10px; border-radius:2px;
+      margin-bottom:.85rem;
+      font-family:'Orbitron',sans-serif;
+    }
+    .acard p { font-size:.9rem; color:#aaa; line-height:1.65; margin:0; }
+
+    /* ── SUBGENRE GRID ── */
+    .sub-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:1.2rem; margin-top:1.5rem;
+    }
+    .sub-card {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:6px; padding:1.4rem;
+      transition:border-color .3s;
+    }
+    .sub-card:hover { border-color:rgba(204,17,17,.4); }
+    .sub-card h4 {
+      font-family:'Bebas Neue',cursive;
+      font-size:1.2rem; color:#fff;
+      letter-spacing:.05em; margin-bottom:.4rem;
+    }
+    .sub-tag {
+      font-family:'Orbitron',sans-serif;
+      font-size:.6rem; letter-spacing:.2em;
+      color:var(--red); display:block;
+      margin-bottom:.6rem;
+    }
+    .sub-card p { font-size:.82rem; color:var(--dim); margin:0; }
+
+    /* ── TRACK CARDS ── */
+    .tracks-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(310px,1fr));
+      gap:2rem;
+    }
+    .tcard {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:8px; overflow:hidden;
+      transition:transform .35s, box-shadow .35s;
+    }
+    .tcard:hover {
+      transform:translateY(-8px);
+      box-shadow:0 24px 50px rgba(0,0,0,.6);
+    }
+    .tthumb {
+      width:100%; aspect-ratio:16/9;
+      display:flex; align-items:center; justify-content:center;
+      position:relative; overflow:hidden;
+    }
+    .tthumb .num {
+      position:absolute; font-family:'Bebas Neue',cursive;
+      font-size:7rem; color:rgba(255,255,255,.04);
+      pointer-events:none; user-select:none;
+    }
+    .tthumb .playbtn {
+      width:64px; height:64px; border-radius:50%;
+      background:rgba(204,17,17,.85);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.6rem; cursor:pointer; position:relative; z-index:2;
+      transition:transform .3s, background .3s;
+      box-shadow:0 0 30px rgba(204,17,17,.5);
+    }
+    .tcard:hover .playbtn {
+      transform:scale(1.12);
+      background:var(--redglow);
+    }
+    .tinfo { padding:1.3rem 1.6rem 1.6rem; }
+    .ttitle {
+      font-family:'Bebas Neue',cursive;
+      font-size:1.35rem; color:#fff;
+      letter-spacing:.05em; margin-bottom:.25rem;
+    }
+    .tartist {
+      color:var(--red); font-size:.82rem;
+      letter-spacing:.15em; margin-bottom:.9rem;
+      font-family:'Orbitron',sans-serif;
+    }
+    .tdesc { font-size:.88rem; color:var(--dim); line-height:1.65; }
+    .watch-btn {
+      display:inline-flex; align-items:center; gap:.5rem;
+      margin-top:1.1rem; padding:.48rem 1.2rem;
+      background:transparent;
+      border:1px solid var(--red); color:var(--red);
+      font-family:'Bebas Neue',cursive;
+      font-size:.95rem; letter-spacing:.12em;
+      text-decoration:none; border-radius:3px;
+      transition: background .25s, color .25s, box-shadow .25s;
+    }
+    .watch-btn:hover {
+      background:var(--red); color:#fff;
+      box-shadow:0 0 20px rgba(204,17,17,.4);
+    }
+
+    /* track thumbnail colour themes */
+    .t1 { background: linear-gradient(135deg,#1a0000,#2a0510); }
+    .t2 { background: linear-gradient(135deg,#00001a,#05052a); }
+    .t3 { background: linear-gradient(135deg,#0d001a,#1a0028); }
+    .t4 { background: linear-gradient(135deg,#001a12,#00200e); }
+    .t5 { background: linear-gradient(135deg,#1a0800,#2a1000); }
+
+    /* ── FOOTER ── */
+    footer {
+      background:#050508;
+      border-top:1px solid rgba(204,17,17,.2);
+      padding:5rem 2rem 3rem;
+      text-align:center;
+    }
+    .foot-logo {
+      font-family:'Bebas Neue',cursive;
+      font-size:3.2rem; color:var(--red);
+      text-shadow:0 0 35px rgba(204,17,17,.55);
+      letter-spacing:.12em; margin-bottom:.3rem;
+    }
+    .foot-sub {
+      color:var(--dim); font-size:.72rem;
+      letter-spacing:.35em; text-transform:uppercase;
+      margin-bottom:3.5rem;
+    }
+    .members {
+      display:flex; justify-content:center;
+      gap:3.5rem; flex-wrap:wrap; margin-bottom:3.5rem;
+    }
+    .member { text-align:center; }
+    .m-av {
+      width:82px; height:82px; border-radius:50%;
+      border:2px solid var(--red);
+      background:rgba(204,17,17,.1);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Bebas Neue',cursive;
+      font-size:2.2rem; color:var(--red);
+      margin:0 auto .8rem;
+      box-shadow:0 0 24px rgba(204,17,17,.25),inset 0 0 24px rgba(204,17,17,.05);
+      transition: transform .3s, box-shadow .3s;
+    }
+    .member:hover .m-av {
+      transform:scale(1.08);
+      box-shadow:0 0 40px rgba(204,17,17,.45);
+    }
+    .m-name {
+      font-family:'Bebas Neue',cursive;
+      font-size:1.25rem; color:#fff;
+      letter-spacing:.12em;
+    }
+    .m-role {
+      font-size:.7rem; color:var(--dim);
+      letter-spacing:.22em; text-transform:uppercase;
+    }
+    .foot-copy {
+      color:rgba(255,255,255,.12); font-size:.78rem;
+      border-top:1px solid rgba(255,255,255,.05);
+      padding-top:2rem;
+    }
+
+    /* ── REVEAL ANIMATION ── */
+    .reveal {
+      opacity:0; transform:translateY(28px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+    .reveal.vis { opacity:1; transform:translateY(0); }
+    .reveal:nth-child(2){transition-delay:.08s}
+    .reveal:nth-child(3){transition-delay:.16s}
+    .reveal:nth-child(4){transition-delay:.24s}
+    .reveal:nth-child(5){transition-delay:.32s}
+    .reveal:nth-child(6){transition-delay:.4s}
+    .reveal:nth-child(7){transition-delay:.48s}
+
+    /* ── SECTION SPACER ── */
+    .mt2 { margin-top:2rem; }
+    .mb1 { margin-bottom:1rem; }
+    .sub-h {
+      font-family:'Bebas Neue',cursive;
+      font-size:1.7rem; color:#fff;
+      letter-spacing:.05em; margin:2.5rem 0 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Scroll progress bar -->
+<div id="progress-bar"></div>
+
+<!-- ═══════════════════════════════════ NAV ═══════════════════════════════════ -->
+<nav>
+  <div class="nav-logo">PHONK</div>
+  <ul class="nav-links">
+    <li><a href="#intro">Intro</a></li>
+    <li><a href="#history">History</a></li>
+    <li><a href="#characteristics">Characteristics</a></li>
+    <li><a href="#artists">Artists</a></li>
+    <li><a href="#examples">Examples</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════════════════════ HERO ══════════════════════════════════ -->
+<div id="hero">
+  <canvas id="particles"></canvas>
+  <div class="hero-grid-bg"></div>
+  <div class="hero-eyebrow">Music Genre Presentation — School Assignment</div>
+  <div class="glitch-wrap">
+    <h1 class="glitch-title" data-text="PHONK">PHONK</h1>
+  </div>
+  <div class="hero-tagline">THE <em>UNDERGROUND</em> SOUND</div>
+  <div class="scroll-cue">Scroll</div>
+</div>
+
+<!-- ══════════════════════════ SECTION 1 — INTRODUCTION ══════════════════════ -->
+<div class="sw" id="intro">
+  <section>
+    <span class="sec-num">01</span>
+    <span class="sec-label">Section 01</span>
+    <h2 class="sec-title">Introduction to Phonk</h2>
+
+    <p class="lead">Phonk is a dark, bass-heavy subgenre of hip-hop and electronic music that fuses the gritty cassette-tape culture of 1990s Memphis underground rap with modern trap production techniques — forging a sound that is simultaneously ancient and relentlessly current.</p>
+
+    <p>Born in the dusty analogue world of hand-dubbed cassette tapes traded from car trunks in Memphis, Tennessee, Phonk was resurrected decades later by a generation of SoundCloud producers who found those forgotten recordings and reimagined them. The result is a genre unlike anything else in the contemporary music landscape — heavy, hypnotic, and haunting.</p>
+    <p>The name itself is a play on "funk" — that indefinable quality of groove and feeling, filtered through the dark, lo-fi lens of Memphis underground rap. Phonk has that quality in abundance: it hits differently. It doesn't ask for your attention politely. It grabs you by the collar.</p>
+
+    <div class="g2 mt2">
+      <div class="card reveal">
+        <h3>What Is Phonk?</h3>
+        <p>Phonk is defined by its atmosphere: dark, nocturnal, aggressive, and hypnotic. Producers sample obscure Memphis rap vocal fragments, flip vintage vinyl records, and layer them over crushing 808 drum machines. The genre is built on contrast — ancient samples over modern production, lo-fi texture over hi-fi bass. It sounds like something dug out of a forgotten tape player left running at 3 AM.</p>
+      </div>
+      <div class="card reveal">
+        <h3>Why Does It Matter?</h3>
+        <p>Phonk is a case study in musical archaeology and internet culture. A niche SoundCloud underground scene became a global streaming phenomenon through TikTok's algorithm. It proved that an entire buried musical movement could be excavated and repackaged for a new generation. Today, Phonk is the soundtrack of drift racing videos, gaming montages, intense workout sessions — and an entire youth subculture worldwide.</p>
+      </div>
+    </div>
+
+    <div class="hbox reveal">
+      <p><strong class="np">Core Identity:</strong> At its core, Phonk is defined by four pillars — <strong class="nr">Darkness</strong> (minor keys, horror samples, menacing atmosphere), <strong class="nr">Bass</strong> (sub-frequency 808 kicks that you feel rather than hear), <strong class="nr">Lo-Fi</strong> (deliberate tape hiss, vinyl crackle, low-fidelity texture), and <strong class="nr">Nostalgia</strong> (samples that smell like the 1990s, recontextualized for the 2020s). Together these create something viscerally powerful.</p>
+    </div>
+
+    <div class="icon-grid">
+      <div class="icon-card reveal">
+        <span class="ico">🎵</span>
+        <h3>Genre</h3>
+        <p>Hip-Hop / Electronic / Trap</p>
+      </div>
+      <div class="icon-card reveal">
+        <span class="ico">📍</span>
+        <h3>Origin</h3>
+        <p>Memphis, Tennessee, USA</p>
+      </div>
+      <div class="icon-card reveal">
+        <span class="ico">📅</span>
+        <h3>Roots</h3>
+        <p>1990s cassette underground</p>
+      </div>
+      <div class="icon-card reveal">
+        <span class="ico">🔄</span>
+        <h3>Revival</h3>
+        <p>2010s SoundCloud scene</p>
+      </div>
+      <div class="icon-card reveal">
+        <span class="ico">📱</span>
+        <h3>Explosion</h3>
+        <p>2021–2022 TikTok viral spread</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════ SECTION 2 — HISTORY ══════════════════════════ -->
+<div class="sw" id="history">
+  <section>
+    <span class="sec-num">02</span>
+    <span class="sec-label">Section 02</span>
+    <h2 class="sec-title">History & Origin</h2>
+
+    <p class="lead">Phonk's story spans three decades — from home-dubbed cassette tapes on the streets of Memphis to hundreds of millions of TikTok streams. It is one of the most remarkable resurrection stories in modern music history.</p>
+
+    <div class="timeline">
+      <div class="titem reveal">
+        <div class="yr">1990s — Memphis Underground</div>
+        <h3>The Cassette Tape Era</h3>
+        <p>The roots of Phonk are inseparable from the underground rap scene of Memphis, Tennessee. Artists like <strong>Three 6 Mafia</strong>, <strong>DJ Paul</strong>, <strong>Juicy J</strong>, <strong>Playa Fly</strong>, and hundreds of unnamed cassette producers built a scene completely outside mainstream music. They dubbed their recordings at home, made their own cover art, and sold tapes directly from car trunks or at small local events. The sound was raw and menacing — chopped vocal samples, horror-film instrumentals, slow bass-heavy beats, and lyrics that embraced the darkest facets of street life. These tapes were never officially released, never on the radio. They circulated hand-to-hand, copied generation by generation, degrading in fidelity with each dub. That degradation became part of the aesthetic.</p>
+      </div>
+
+      <div class="titem reveal">
+        <div class="yr">Late 1990s — Houston's Influence</div>
+        <h3>Chopped & Screwed: DJ Screw's Legacy</h3>
+        <p>Simultaneously, in Houston, Texas, <strong>DJ Screw</strong> was developing the "Chopped and Screwed" technique — deliberately slowing down and manipulating vinyl records and vocal tracks to create a thick, syrupy, disorienting sound. This method became foundational to Phonk's production vocabulary. The idea of pitch-shifting vocals downward, chopping them into short repetitive loops, and layering them over slowed drum patterns would define how modern Phonk producers work with samples. DJ Screw's influence on the genre cannot be overstated — nearly every Phonk track made today carries his fingerprints.</p>
+      </div>
+
+      <div class="titem reveal">
+        <div class="yr">2000s — Digital Archaeology</div>
+        <h3>Preserving the Tapes</h3>
+        <p>Through the 2000s, internet archivists and music collectors began the laborious work of digitizing the rare Memphis underground cassettes. Tracks that had existed only in a handful of physical copies were uploaded to early internet forums, Myspace pages, and then YouTube. For most of the world, this music was brand new — despite being recorded a decade earlier. These uploads planted the seeds of what would become Phonk. A generation of young producers discovered them and were immediately struck by their distinctive, untamed power.</p>
+      </div>
+
+      <div class="titem reveal">
+        <div class="yr">2010–2016 — SoundCloud Origins</div>
+        <h3>The Genre Finds Its Name</h3>
+        <p>Around 2011–2014, a small group of producers — most notably <strong>DJ Smokey</strong> and <strong>Soudiere</strong> — began uploading music to SoundCloud that explicitly blended Memphis rap samples with modern trap production. This music circulated among a tiny but passionate community. The term "Phonk" emerged organically within this community to describe music that captured the "phonk" — the intangible, funky darkness — of those original Memphis recordings, filtered through contemporary production sensibilities. It was underground in every sense: small audience, no commercial infrastructure, driven entirely by artistic passion.</p>
+      </div>
+
+      <div class="titem reveal">
+        <div class="yr">2017–2020 — The Underground Grows</div>
+        <h3>SoundCloud Expansion</h3>
+        <p>The Phonk scene expanded steadily through SoundCloud's underground ecosystem. Eastern European producers — particularly Russian artists — discovered the genre and began contributing their own interpretations, often taking it in harder, more aggressive directions. Artists like <strong>KORDHELL</strong>, <strong>$uicideboy$</strong> (adjacent influence), and numerous anonymous producers grew the scene from hundreds to tens of thousands of followers. YouTube algorithm recommendations began connecting listeners to Phonk through related underground music searches. The community was growing, but still very much underground.</p>
+      </div>
+
+      <div class="titem reveal">
+        <div class="yr">2021–2022 — The TikTok Detonation</div>
+        <h3>Drift Phonk Goes Viral</h3>
+        <p>The explosion happened when a specific variant of Phonk — later called <strong class="nr">Drift Phonk</strong> — began dominating TikTok. Characterized by distorted horn stabs, faster tempos, and an aggressive, maximum-energy production style, Drift Phonk became the perfect soundtrack for drift car racing clips, gaming montages, and workout motivation videos. KORDHELL's "Murder In My Mind" and Interworld's "Metamorphosis" accumulated hundreds of millions of streams seemingly overnight. What had been a niche underground community became a globally recognized genre. Phonk had officially arrived.</p>
+      </div>
+
+      <div class="titem reveal">
+        <div class="yr">2022–Present — Fragmentation & Evolution</div>
+        <h3>A Genre Finds Its Many Faces</h3>
+        <p>Commercial success brought fragmentation. Purists bemoaned the commercialization of their underground movement while new producers embraced the expanded audiences. The genre split into distinct currents: Drift Phonk (aggressive, horn-driven, fast), Dark Phonk (atmospheric, slow, horror-influenced), <strong class="np">Brazilian Phonk</strong> (merging with funk carioca rhythms), and Aggressive Phonk (industrial-influenced extremism). Some of these variants sound radically different from the Memphis-rooted originals — but they all share the same DNA: darkness, bass, and that ineffable quality of feeling like music from another world.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════ SECTION 3 — CHARACTERISTICS ══════════════════════ -->
+<div class="sw" id="characteristics">
+  <section>
+    <span class="sec-num">03</span>
+    <span class="sec-label">Section 03</span>
+    <h2 class="sec-title">Main Characteristics</h2>
+
+    <p class="lead">Phonk's sonic identity is built from a specific toolkit of instruments, techniques, and aesthetic choices. Understanding these elements reveals why the genre sounds unlike anything else in contemporary music.</p>
+
+    <!-- Instruments -->
+    <div class="card reveal">
+      <h3>Instruments & Production Equipment</h3>
+      <div class="g2 mt2">
+        <ul class="dot">
+          <li><strong>Roland TR-808 Drum Machine:</strong> The iconic drum machine whose bass drum produces sub-frequency "boom" that you feel in your chest. The 808's kick is the heartbeat of every Phonk track — often distorted, filtered, and tuned to specific pitches for melodic effect.</li>
+          <li><strong>Cowbells:</strong> Directly borrowed from Memphis rap tradition, the metallic cowbell is one of Phonk's most recognizable signatures. Used rhythmically alongside the drum pattern, its clinking, hollow tone creates instant "Memphis" atmosphere.</li>
+          <li><strong>Vinyl Samples:</strong> Old jazz, soul, funk, and R&B records are sampled, manipulated, pitched down, and layered. The vinyl crackle and tape hiss are preserved — or even artificially added — as essential texture.</li>
+          <li><strong>Memphis Rap Vocal Samples:</strong> Fragments of acapellas from 1990s Memphis underground tapes are chopped into short phrases, pitch-shifted, and used as melodic instruments rather than traditional rap vocals. These ghosts of the original artists haunt every Phonk track.</li>
+        </ul>
+        <ul class="dot">
+          <li><strong>Dark Synthesizers:</strong> Minor-key synth pads, eerie arpeggiated leads, and distorted horn patches create Phonk's unsettling atmosphere. Heavy reverb and delay push these sounds into vast, cavernous spaces.</li>
+          <li><strong>Trap Hi-Hats & Snares:</strong> Modern trap-style rolling hi-hats, crisp snare cracks, and claps sit beneath the lo-fi vintage samples — creating that contrast between ancient and contemporary that defines the genre.</li>
+          <li><strong>Distortion & Saturation Plugins:</strong> Heavy processing gives everything that "dirty," overdriven quality. The sound is intentionally pushed to the edge of breaking up — aggressive, saturated, barely contained.</li>
+          <li><strong>FL Studio / Ableton Live:</strong> The vast majority of Phonk is produced in FL Studio, though Ableton Live is also common. The DAW is used to chop samples, program drums, and layer the complex arrangements of a typical track.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Rhythm and Style -->
+    <div class="card reveal">
+      <h3>Rhythm, Melody & Sonic Style</h3>
+      <div class="g2 mt2">
+        <div>
+          <p><strong class="nr">Tempo:</strong> Traditional Phonk runs at 130–145 BPM — slow enough to feel heavy and dragging, creating a hypnotic, intoxicating groove. Drift Phonk accelerates to 155–170 BPM for maximum energy. The slower tempos in particular create a sensation of slow-motion, deliberate menace.</p>
+          <p><strong class="nr">Chopped & Screwed Technique:</strong> Vocals and samples are pitch-shifted downward (often a few semitones to a full octave) and rhythmically "chopped" — carved into tiny fragments and rearranged into stuttering, looping patterns. The result is inhuman, ethereal, and deeply hypnotic. Listening to a well-executed phonk vocal chop feels like hearing words from a dream.</p>
+          <p><strong class="nr">Sample Flipping:</strong> Producers "flip" samples — taking a brief moment from an old record and transforming it into the melodic backbone of an entirely new track. The craft is in finding forgotten gems and reimagining them with modern production sensibilities. The best Phonk samples feel both familiar and completely alien.</p>
+        </div>
+        <div>
+          <p><strong class="np">Atmosphere:</strong> Phonk's emotional palette is deliberately narrow: tension, aggression, melancholy, menace, and power. This isn't music for happiness or celebration. It is music for dark nights, empty roads, late-hour introspection, and pushing past limits. The atmosphere is constructed through every production decision — from the minor key choices to the reverb depths.</p>
+          <p><strong class="np">Lo-Fi Aesthetic:</strong> Pristine audio is the enemy of authentic Phonk. Tape hiss, vinyl crackle, low-fidelity compression, and analog-style distortion are not flaws — they are features. This "impurity" connects the modern production to its cassette-tape origins and gives the music a warmth and humanity that hyper-produced pop can never replicate.</p>
+          <p><strong class="np">Repetition & Hypnosis:</strong> Many Phonk tracks are deliberately minimal — a few elements repeated with tiny variations across 2–3 minutes. The power comes from groove and atmosphere, not complexity. This repetition creates a hypnotic, trance-like quality that draws listeners deeper with each loop.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sub-h">Subgenres of Phonk</h3>
+    <div class="sub-grid">
+      <div class="sub-card reveal">
+        <span class="sub-tag">MOST MAINSTREAM</span>
+        <h4>🚗 Drift Phonk</h4>
+        <p>Aggressive distorted horn stabs, fast tempos (155–170 BPM), hard-hitting 808s. Synonymous with drift car culture and TikTok. Most commercially successful variant — artists like KORDHELL define this space.</p>
+      </div>
+      <div class="sub-card reveal">
+        <span class="sub-tag">ORIGINAL FORM</span>
+        <h4>🌑 Dark / Memphis Phonk</h4>
+        <p>Atmospheric, slow (120–140 BPM), horror-influenced. Closest to the Memphis rap roots. Emphasizes vintage samples, haunting melody, and a raw lo-fi aesthetic. The purist's Phonk.</p>
+      </div>
+      <div class="sub-card reveal">
+        <span class="sub-tag">LATIN FUSION</span>
+        <h4>🇧🇷 Brazilian Phonk</h4>
+        <p>Phonk production merged with baile funk and funk carioca rhythms from Brazil. Energetic, dance-oriented, high BPM — while retaining dark production aesthetics. Hugely popular in South America.</p>
+      </div>
+      <div class="sub-card reveal">
+        <span class="sub-tag">EXTREME WING</span>
+        <h4>⚡ Aggressive Phonk</h4>
+        <p>Industrial-influenced, maximum distortion, screaming synths. Borders on metal and hardcore electronic. Pushes the genre's aggressive tendencies to their logical extremes. Intense and uncompromising.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════ SECTION 4 — ARTISTS ══════════════════════════ -->
+<div class="sw" id="artists">
+  <section>
+    <span class="sec-num">04</span>
+    <span class="sec-label">Section 04</span>
+    <h2 class="sec-title">Famous Artists</h2>
+
+    <p class="lead">Phonk's landscape is defined by a diverse cast of producers and performers — from Memphis underground pioneers who built the foundation to modern SoundCloud architects who took the genre global.</p>
+
+    <div class="artist-grid">
+
+      <div class="acard reveal">
+        <div class="aname">DJ SMOKEY</div>
+        <span class="atag">FOUNDING FATHER</span>
+        <p>Often cited as the single most important figure in early modern Phonk, DJ Smokey began uploading Memphis-influenced productions to SoundCloud in the early 2010s. His approach was archaeological — digging deep into obscure Memphis cassette recordings and building new music around their found artifacts. Tracks like "Drippin In Phonk" and his collaborations with Soudiere established the genre's foundational aesthetic. DJ Smokey proved that the Memphis underground deserved to live again, and his dedication to preserving that lineage while evolving it set the ethical standard for the entire genre.</p>
+      </div>
+
+      <div class="acard reveal">
+        <div class="aname">SOUDIERE</div>
+        <span class="atag">UNDERGROUND ARCHITECT</span>
+        <p>Soudiere is one of the most respected names in underground Phonk — a producer with an exceptional ear for obscure Memphis samples and a deep reverence for the genre's heritage. His track "Hood Baby" is considered a defining artifact of Phonk history: a perfect synthesis of chopped Memphis vocals, dusty drums, and hypnotic dark melody. Soudiere represents the "purist" wing of Phonk — artists who prioritize atmosphere, authenticity, and the preservation of Memphis rap's spirit over commercial considerations. His influence on the SoundCloud scene was immeasurable.</p>
+      </div>
+
+      <div class="acard reveal">
+        <div class="aname">KORDHELL</div>
+        <span class="atag">MAINSTREAM BREAKTHROUGH</span>
+        <p>KORDHELL is the artist who brought Phonk to the global mainstream. "Murder In My Mind" — one of the most-streamed Phonk tracks in history — made the genre impossible to ignore, accumulating hundreds of millions of plays across platforms. With a harder, more aggressive production style that bridged underground Phonk and the emerging Drift Phonk variant, KORDHELL proved the genre could compete commercially without abandoning its dark core. His success opened the floodgates for an entire generation of producers seeking global audiences through the Phonk aesthetic.</p>
+      </div>
+
+      <div class="acard reveal">
+        <div class="aname">GHOSTEMANE</div>
+        <span class="atag">CROSSOVER FORCE</span>
+        <p>Ghostemane (Eric Whitney) occupies the thrilling intersection of Phonk, trap metal, industrial, and black metal. Starting with Phonk-influenced trap music and evolving into a full crossover phenomenon, he brought the dark aesthetics of underground electronic music to alternative rock and metal audiences. Tracks like "Mercury" blended Phonk's atmospheric darkness with intense rap delivery and industrial production — bridging multiple underground worlds. His career is a testament to how Phonk's core aesthetic can serve as a launching pad into genuinely experimental music territory.</p>
+      </div>
+
+      <div class="acard reveal">
+        <div class="aname">INTERWORLD</div>
+        <span class="atag">ETHEREAL PHONK</span>
+        <p>Interworld crafts a more atmospheric, transcendent variety of Phonk. "Metamorphosis" (with WARCHILDREN) became a viral phenomenon for all the right reasons — its soaring, celestial synthesizer melodies layered over dark Phonk rhythms created an emotional experience that resonated far beyond the typical Phonk demographic. Interworld demonstrates the genre's capacity for genuine emotional depth: Phonk doesn't have to be purely aggressive. It can be haunting, beautiful, and deeply moving while maintaining its dark core identity. An essential voice in the genre's evolution.</p>
+      </div>
+
+      <div class="acard reveal">
+        <div class="aname">FLOYYMENOR</div>
+        <span class="atag">LATIN PHONK PIONEER</span>
+        <p>FloyyMenor represents the global expansion of Phonk into Latin America, particularly within the Chilean and broader Spanish-speaking music scene. By blending Phonk production aesthetics with Latin rhythms, reggaeton influences, and Spanish-language lyrics, he helped establish "Latin Phonk" as a legitimate regional variant. His viral commercial success — songs accumulating tens of millions of streams — demonstrated that Phonk's dark, aggressive energy transcends language and geography, connecting with youth subcultures across completely different cultural contexts worldwide.</p>
+      </div>
+
+      <div class="acard reveal">
+        <div class="aname">MC RIDE</div>
+        <span class="atag">INFLUENTIAL PARALLEL</span>
+        <p>MC Ride, vocalist of experimental hip-hop group <strong>Death Grips</strong>, represents a parallel artistic lineage that profoundly influenced Phonk's most extreme practitioners. Death Grips' confrontational, maximalist approach to dark hip-hop — industrial production, screamed and distorted vocals, dystopian aesthetics, refusal of commercial compromise — gave many aggressive Phonk producers a blueprint for pushing beyond conventional limits. While Death Grips sits adjacent to Phonk rather than strictly within it, MC Ride's influence on the genre's aggressive wing and its "no compromise" ethos is unmistakable and widely acknowledged by artists within the scene.</p>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<!-- ══════════════════════════ SECTION 5 — EXAMPLES ══════════════════════════ -->
+<div class="sw" id="examples">
+  <section>
+    <span class="sec-num">05</span>
+    <span class="sec-label">Section 05</span>
+    <h2 class="sec-title">Listen: Iconic Phonk Tracks</h2>
+
+    <p class="lead">These five tracks are essential listening for understanding Phonk — each one illustrating a different facet of the genre's sonic identity, cultural significance, and historical development.</p>
+
+    <div class="tracks-grid">
+
+      <!-- Track 1 -->
+      <div class="tcard reveal">
+        <div class="tthumb t1">
+          <span class="num">01</span>
+          <div class="playbtn">▶</div>
+        </div>
+        <div class="tinfo">
+          <div class="ttitle">MURDER IN MY MIND</div>
+          <div class="tartist">KORDHELL</div>
+          <p class="tdesc">Perhaps the most recognized Phonk track ever produced. The distorted horn stab that opens the track is now one of the most iconic sounds in underground music. Its relentless 808 kick, hypnotic loop structure, and aggressive production made it the defining anthem of drift culture and gaming. With hundreds of millions of streams, this is the track that introduced mainstream audiences to Phonk and set the template for modern Drift Phonk. A landmark release.</p>
+          <a class="watch-btn" href="https://www.youtube.com/results?search_query=KORDHELL+Murder+In+My+Mind" target="_blank">▶ WATCH ON YOUTUBE</a>
+        </div>
+      </div>
+
+      <!-- Track 2 -->
+      <div class="tcard reveal">
+        <div class="tthumb t2">
+          <span class="num">02</span>
+          <div class="playbtn">▶</div>
+        </div>
+        <div class="tinfo">
+          <div class="ttitle">METAMORPHOSIS</div>
+          <div class="tartist">INTERWORLD & WARCHILDREN</div>
+          <p class="tdesc">A more ethereal, emotionally charged take on Phonk. "Metamorphosis" features soaring synthesizer melodies that transcend the typical aggressive framework, creating something genuinely cinematic and moving. The contrast between its almost angelic synths and the dark Phonk rhythm section is what makes it exceptional. It proved Phonk could appeal to audiences far beyond gaming and car culture — and introduced millions to the genre through pure emotional resonance rather than adrenaline.</p>
+          <a class="watch-btn" href="https://www.youtube.com/results?search_query=Interworld+Metamorphosis+Phonk" target="_blank">▶ WATCH ON YOUTUBE</a>
+        </div>
+      </div>
+
+      <!-- Track 3 -->
+      <div class="tcard reveal">
+        <div class="tthumb t3">
+          <span class="num">03</span>
+          <div class="playbtn">▶</div>
+        </div>
+        <div class="tinfo">
+          <div class="ttitle">HOOD BABY</div>
+          <div class="tartist">SOUDIERE</div>
+          <p class="tdesc">A cornerstone of underground Phonk and essential listening for anyone who wants to understand where the genre comes from. "Hood Baby" showcases the authentic core of the genre: expertly chopped Memphis rap vocal samples, a slow hypnotic groove, authentic lo-fi atmosphere, and a deep reverence for the Memphis underground tradition. This is Phonk before the TikTok viral spread — raw, deliberate, and completely absorbed in its own unique aesthetic world. The template for an entire movement.</p>
+          <a class="watch-btn" href="https://www.youtube.com/results?search_query=Soudiere+Hood+Baby+Phonk" target="_blank">▶ WATCH ON YOUTUBE</a>
+        </div>
+      </div>
+
+      <!-- Track 4 -->
+      <div class="tcard reveal">
+        <div class="tthumb t4">
+          <span class="num">04</span>
+          <div class="playbtn">▶</div>
+        </div>
+        <div class="tinfo">
+          <div class="ttitle">PHONK DE SCOOTER</div>
+          <div class="tartist">VIRAL PHONK EDIT</div>
+          <p class="tdesc">A viral TikTok phenomenon demonstrating how Phonk production aesthetics can be applied to unexpected source material. Phonk edits of mainstream songs became their own sub-movement — introducing millions of listeners to the genre by filtering familiar melodies through dark, bass-heavy production. This track and its many variants show Phonk's incredible versatility and its unique ability to colonize and transform any musical material it encounters. A testament to the genre's infectious, adaptable identity.</p>
+          <a class="watch-btn" href="https://www.youtube.com/results?search_query=Phonk+de+Scooter+viral" target="_blank">▶ WATCH ON YOUTUBE</a>
+        </div>
+      </div>
+
+      <!-- Track 5 -->
+      <div class="tcard reveal">
+        <div class="tthumb t5">
+          <span class="num">05</span>
+          <div class="playbtn">▶</div>
+        </div>
+        <div class="tinfo">
+          <div class="ttitle">DRIPPIN IN PHONK</div>
+          <div class="tartist">DJ SMOKEY</div>
+          <p class="tdesc">Going back to the absolute source. DJ Smokey's early SoundCloud productions are where modern Phonk truly began, and "Drippin In Phonk" encapsulates everything that made the scene special: raw Memphis vocal samples, dark lo-fi melody, deliberate tape-degraded production quality. Listening to this track alongside a modern KORDHELL release illustrates the full arc of Phonk's evolution — from raw underground cassette culture to polished global streaming phenomenon. The alpha and the omega of Phonk history.</p>
+          <a class="watch-btn" href="https://www.youtube.com/results?search_query=DJ+Smokey+Drippin+In+Phonk" target="_blank">▶ WATCH ON YOUTUBE</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="hbox reveal" style="margin-top:3rem;">
+      <p style="margin:0;"><strong class="np">Listening Note:</strong> Each of these tracks represents a different era and variant of Phonk. Listen to them in order — from Soudiere's "Hood Baby" through to KORDHELL's "Murder In My Mind" — and you'll hear the entire evolution of the genre in about 15 minutes. Notice how the production becomes cleaner and more aggressive over time, while the DNA of those original Memphis cassette tapes persists in every track.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════════ -->
+<footer>
+  <div class="foot-logo">PHONK</div>
+  <div class="foot-sub">A Music Genre Presentation — School Assignment 2025</div>
+
+  <div class="members">
+    <div class="member">
+      <div class="m-av">A</div>
+      <div class="m-name">AMAR</div>
+      <div class="m-role">Group Member</div>
+    </div>
+    <div class="member">
+      <div class="m-av">O</div>
+      <div class="m-name">OCHIRDARI</div>
+      <div class="m-role">Group Member</div>
+    </div>
+    <div class="member">
+      <div class="m-av">B</div>
+      <div class="m-name">BILGUUN</div>
+      <div class="m-role">Group Member</div>
+    </div>
+  </div>
+
+  <div class="foot-copy">
+    Phonk Genre Presentation · Amar, Ochirdari &amp; Bilguun · School Music Assignment 2025
+  </div>
+</footer>
+
+<!-- ══════════════════════════════ JAVASCRIPT ════════════════════════════════ -->
+<script>
+  /* ── PARTICLE CANVAS ── */
+  (function () {
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let W, H, pts = [];
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function rand(a, b) { return a + Math.random() * (b - a); }
+
+    for (let i = 0; i < 80; i++) {
+      pts.push({
+        x: rand(0, window.innerWidth),
+        y: rand(0, window.innerHeight),
+        r: rand(0.5, 2),
+        vx: rand(-0.15, 0.15),
+        vy: rand(-0.3, -0.05),
+        alpha: rand(0.1, 0.6),
+        color: Math.random() > 0.5
+          ? `rgba(204,17,17,`
+          : `rgba(139,0,255,`
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      pts.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color + p.alpha + ')';
+        ctx.fill();
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.0008;
+
+        if (p.y < -10 || p.alpha <= 0) {
+          p.x = rand(0, W);
+          p.y = H + 5;
+          p.alpha = rand(0.2, 0.6);
+          p.vy = rand(-0.3, -0.05);
+        }
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+
+  /* ── SCROLL PROGRESS BAR ── */
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    document.getElementById('progress-bar').style.width = (scrollTop / docH * 100) + '%';
+  });
+
+  /* ── REVEAL ON SCROLL ── */
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  /* ── ACTIVE NAV LINK ── */
+  const secs   = ['intro', 'history', 'characteristics', 'artists', 'examples'];
+  const links  = {};
+  secs.forEach(id => {
+    links[id] = document.querySelector(`.nav-links a[href="#${id}"]`);
+  });
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    secs.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 80) current = id;
+    });
+    secs.forEach(id => {
+      if (links[id]) links[id].classList.toggle('active', id === current);
+    });
+  });
+
+  /* ── SMOOTH SCROLL FOR NAV LINKS ── */
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  /* ── EXTRA GLITCH TRIGGER ── */
+  const glitchEl = document.querySelector('.glitch-title');
+  setInterval(() => {
+    if (Math.random() > 0.65) {
+      glitchEl.style.animationPlayState = 'paused';
+      glitchEl.style.transform = `skewX(${(Math.random() - .5) * 4}deg)`;
+      setTimeout(() => {
+        glitchEl.style.transform = '';
+        glitchEl.style.animationPlayState = '';
+      }, 80 + Math.random() * 80);
+    }
+  }, 2800);
+</script>
+</body>
+</html>
